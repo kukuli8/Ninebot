@@ -1,0 +1,36 @@
+name: 九号出行自动签到
+
+# 触发条件：每天早上8点运行 + 允许手动触发
+on:
+  schedule:
+    - cron: '0 0 * * *'  # UTC时间0点 = 北京时间8点（根据需要调整）
+  workflow_dispatch:
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 安装Node环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 执行签到
+        run: npm start
+        env:
+          # 从GitHub Secrets读取环境变量（用户需自行配置）
+          NINEBOT_NAME: ${{ secrets.NINEBOT_NAME }}
+          NINEBOT_DEVICE_ID: ${{ secrets.NINEBOT_DEVICE_ID }}
+          NINEBOT_AUTHORIZATION: ${{ secrets.NINEBOT_AUTHORIZATION }}
+          NINEBOT_ACCOUNTS: ${{ secrets.NINEBOT_ACCOUNTS }}
+          BARK_KEY: ${{ secrets.BARK_KEY }}
+          BARK_GROUP: ${{ secrets.BARK_GROUP }}
+          BARK_ICON: ${{ secrets.BARK_ICON }}
+          BARK_URL: ${{ secrets.BARK_URL }}
+          # 其他Bark参数按需添加
